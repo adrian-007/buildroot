@@ -1,0 +1,1 @@
+root=/dev/nfs rootfstype=nfs nfsroot=192.168.2.1:/mnt/rpi/rootfs,v3,tcp rw ip=192.168.2.2:192.168.2.1:192.168.2.1:255.255.255.0:cctv:usb0:static rootwait g_ether.host_addr=32:70:05:18:ff:78 g_ether.dev_addr=46:10:3a:b3:af:d9 console=tty1 console=ttyAMA0,115200 quiet

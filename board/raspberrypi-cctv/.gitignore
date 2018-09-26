@@ -1,0 +1,6 @@
+# this may contain passwords, so don't share it on repo
+rootfs-overlay/etc/default/camera
+
+rootfs-overlay/var/lib/connman/*
+!rootfs-overlay/var/lib/connman/settings
+

@@ -1,0 +1,69 @@
+#!/bin/sh
+#
+# Handling tasks for first device boot
+#
+
+[ -r /etc/default/camera ] && export $(grep -v '^#' /etc/default/camera | xargs)
+
+BLOCK_DEVICE=/dev/mmcblk0
+PARTITION=3
+
+if [ "$CAMERA_BASE_DIR" == "" ];
+then
+    MOUNT_POINT=/var/lib/camera
+else
+    MOUNT_POINT=$CAMERA_BASE_DIR
+fi
+
+start() {
+    local PARTITION_DEVICE="${BLOCK_DEVICE}p${PARTITION}"
+
+    if [ ! -b $PARTITION_DEVICE ];
+    then
+        echo "$PARTITION_DEVICE is not a block device"
+    fi
+
+    if ! grep -Fq "$PARTITION_DEVICE" /etc/fstab;
+    then
+        echo Resizing $PARTITION_DEVICE to fill remaining space...
+        /sbin/parted $BLOCK_DEVICE resizepart $PARTITION 100%
+        echo Done
+
+        echo Resizing filesystem...
+        /sbin/resize2fs $PARTITION_DEVICE
+        echo Done
+
+        if [ ! -d $MOUNT_POINT ];
+        then
+            echo Creating mount point...
+            mkdir -p $MOUNT_POINT
+            echo Done
+        fi
+
+        echo Updating fstab...
+        echo "${PARTITION_DEVICE} ${MOUNT_POINT}   auto    defaults,rw,noatime    0 0" >> /etc/fstab
+        echo Done
+
+        echo Rebooting
+        /sbin/reboot
+        rm -f $0
+    else
+        echo First boot already performed
+    fi
+}
+
+case "$1" in
+  start)
+        start $0
+        ;;
+  stop)
+        ;;
+  restart|reload)
+        start $0
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|reload}"
+        exit 1
+esac
+
+exit $?

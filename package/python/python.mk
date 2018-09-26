@@ -33,6 +33,7 @@ HOST_PYTHON_CONF_OPTS += \
 	--disable-test-modules \
 	--disable-bz2 \
 	--disable-ssl \
+	--disable-hashlib \
 	--disable-ossaudiodev \
 	--disable-pyo-build
 

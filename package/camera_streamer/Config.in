@@ -1,0 +1,36 @@
+config BR2_PACKAGE_CAMERA_STREAMER
+	bool "camera_streamer"
+        select BR2_PACKAGE_LIBCURL
+        select BR2_PACKAGE_FFMPEG
+        select BR2_PACKAGE_RPI_USERLAND
+        select BR2_PACKAGE_BOOST
+        select BR2_PACKAGE_BOOST_FILESYSTEM
+        select BR2_PACKAGE_BOOST_PROGRAM_OPTIONS
+        select BR2_PACKAGE_BOOST_SYSTEM
+	help
+          Camera Streamer is a set of scripts and a binary program
+          that allows creating HLS streams. Scripts are using RaspiVid
+          and FFmpeg executables to capture video from camera and
+          encapsulate it to MPEG-TS segment files. Those segments
+          are saved on predefined location when are picked up by
+          camera_streamer executable. Once running, program will
+          periodically check video output directory and upload
+          video files to remote server (supporting PUT method) from
+          newest to oldest.
+
+          FFmpeg is able to upload files on it's own, but it doesn't
+          have good congestion control. Camera Streamer on the other
+          hand uses filesystem as cache and control current bandwidth
+          usage - if we have more time to upload than capture, then
+          program will send files from backlog. If backlog grows too
+          much, then program will remove redundant files from filesystem
+          to save storage space.
+
+if BR2_PACKAGE_CAMERA_STREAMER
+
+config BR2_PACKAGE_CAMERA_STREAMER_SERVICE
+      bool "camera_streamer_service"
+      help
+        Install service files for Camera Streamer
+
+endif

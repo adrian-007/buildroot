@@ -1,0 +1,41 @@
+--- a/libavcodec/omx.c	2018-08-22 11:28:49.189436133 +0200
++++ b/libavcodec/omx.c	2018-08-22 11:43:44.689392166 +0200
+@@ -93,12 +93,28 @@
+     return dlsym(handle, buf);
+ }
+ 
++static void *dlopen_check_relative(const char *filename, int flag)
++{
++    void* handle;
++    char *pathSeparator;
++
++    if (!(handle = dlopen(filename, flag)))
++    {
++        if ((pathSeparator = strrchr(filename, '/')))
++        {
++            handle = dlopen(pathSeparator + 1, flag);
++        }
++    }
++
++    return handle;
++}
++
+ static av_cold int omx_try_load(OMXContext *s, void *logctx,
+                                 const char *libname, const char *prefix,
+                                 const char *libname2)
+ {
+     if (libname2) {
+-        s->lib2 = dlopen(libname2, RTLD_NOW | RTLD_GLOBAL);
++        s->lib2 = dlopen_check_relative(libname2, RTLD_NOW | RTLD_GLOBAL);
+         if (!s->lib2) {
+             av_log(logctx, AV_LOG_WARNING, "%s not found\n", libname);
+             return AVERROR_ENCODER_NOT_FOUND;
+@@ -111,7 +127,7 @@
+             return AVERROR_ENCODER_NOT_FOUND;
+         }
+     }
+-    s->lib = dlopen(libname, RTLD_NOW | RTLD_GLOBAL);
++    s->lib = dlopen_check_relative(libname, RTLD_NOW | RTLD_GLOBAL);
+     if (!s->lib) {
+         av_log(logctx, AV_LOG_WARNING, "%s not found\n", libname);
+         return AVERROR_ENCODER_NOT_FOUND;

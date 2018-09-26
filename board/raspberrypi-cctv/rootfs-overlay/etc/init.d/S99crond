@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# Start crond
+#
+
+
+start() {
+    PID=$(pidof crond)
+    if [ $? -eq 0 ];
+    then
+        echo "crond is already running (pid: $PID)"
+        exit 1
+    fi
+
+    printf "Starting crontab: "
+    crond -b -L /var/log/crontab.log
+    echo "OK"
+}
+
+stop() {
+    PID=$(pidof crond)
+    if [ $? -ne 0 ];
+    then
+        echo "crond is not running"
+        exit 1
+    fi
+
+    printf "Stopping crond: "
+    kill $PID
+    echo "OK"
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|reload}"
+        exit 1
+esac
+
+exit $?

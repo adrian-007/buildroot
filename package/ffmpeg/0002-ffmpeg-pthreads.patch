@@ -23,12 +23,12 @@ diff --git a/configure b/configure
 index c86e578..76523c8 100755
 --- a/configure
 +++ b/configure
-@@ -2780,7 +2780,7 @@ omx_rpi_select="omx"
- qsvdec_select="qsv"
+@@ -2927,7 +2927,7 @@
  qsvenc_select="qsv"
+ qsvvpp_select="qsv"
  vaapi_encode_deps="vaapi"
--v4l2_m2m_deps_any="linux_videodev2_h"
-+v4l2_m2m_deps="linux_videodev2_h pthreads"
- 
- hwupload_cuda_filter_deps="cuda"
- scale_npp_filter_deps="cuda libnpp"
+-v4l2_m2m_deps="linux_videodev2_h sem_timedwait"
++v4l2_m2m_deps="linux_videodev2_h sem_timedwait pthreads"
+
+ hwupload_cuda_filter_deps="ffnvcodec"
+ scale_npp_filter_deps="ffnvcodec libnpp"

@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# Read / write hardware clock
+#
+
+
+start() {
+    if [ -e /dev/rtc0 ];
+    then
+        printf "Reading RTC clock ($(hwclock -u -r)) and setting it as system clock: "
+        hwclock -u -s
+        echo "OK ($(date))"
+    else
+        echo "Cannot find RTC clock"
+    fi
+}
+
+stop() {
+    if [ -e /dev/rtc0 ];
+    then
+        printf "Writing system clock ($(date)) to RTC clock ($(hwclock -u -r)): "
+        hwclock -u -w
+        echo "OK"
+    else
+        echo "Cannot find RTC clock"
+    fi
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|reload}"
+        exit 1
+esac
+
+exit $?

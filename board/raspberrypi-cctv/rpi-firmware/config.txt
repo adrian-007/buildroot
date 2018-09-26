@@ -1,0 +1,5 @@
+gpu_mem=224
+kernel=zImage
+start_x=1
+
+dtoverlay=i2c-rtc,pcf8563
